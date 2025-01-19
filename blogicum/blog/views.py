@@ -70,11 +70,11 @@ class ProfileDetailView(LoginRequiredMixin, PostMixin, DetailView):
         context = super().get_context_data(**kwargs)
         user_posts = Post.objects.filter(author=self.object)
         if self.request.user == self.object:
+            user_posts = user_posts.select_related(
+                'author', 'location', 'category'
+            ).prefetch_related('post_comment')
+        else:
             user_posts = self.filter_published_posts(user_posts)
-        user_posts = (
-            user_posts.select_related('author', 'location', 'category')
-            .prefetch_related('post_comment')
-        )
         paginator = Paginator(user_posts, Constants.POSTS_LIMIT)
         page_number = self.request.GET.get('page')
         context['page_obj'] = paginator.get_page(page_number)
