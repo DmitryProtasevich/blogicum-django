@@ -71,7 +71,7 @@ class Post(AbstractPublishedCreated):
         )
     )
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, null=False, blank=False,
+        User, on_delete=models.CASCADE,
         verbose_name='Автор публикации',
     )
     location = models.ForeignKey(
@@ -90,7 +90,7 @@ class Post(AbstractPublishedCreated):
         return self.post_comment.count()
 
     def get_absolute_url(self):
-        return reverse('blog:post_detail', kwargs={'pk': self.pk})
+        return reverse('blog:post_detail', kwargs={'post_id': self.pk})
 
     class Meta:
         verbose_name = 'публикация'
