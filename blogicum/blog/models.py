@@ -7,15 +7,30 @@ from .constants import Constants
 User = get_user_model()
 
 
-class AbstractPublishedCreated(models.Model):
-    is_published = models.BooleanField(
-        'Опубликовано', default=True,
-        help_text='Снимите галочку, чтобы скрыть публикацию.'
-    )
+class AbstsractCreatedAt(models.Model):
     created_at = models.DateTimeField('Добавлено', auto_now_add=True)
 
     class Meta:
         abstract = True
+        ordering = ('created_at',)
+        verbose_name = 'имя в единственном числе'
+        verbose_name_plural = 'Категори'
+
+
+class AbstractPublishedCreated(AbstsractCreatedAt):
+    is_published = models.BooleanField(
+        'Опубликовано', default=True,
+        help_text='Снимите галочку, чтобы скрыть публикацию.'
+    )
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return (
+            (self.title[:Constants.MAX_TITLE_LENGTH] + '...')
+            if len(self.title) > Constants.MAX_TITLE_LENGTH else self.title
+        )
 
 
 class Category(AbstractPublishedCreated):
@@ -31,15 +46,9 @@ class Category(AbstractPublishedCreated):
         )
     )
 
-    class Meta:
+    class Meta(AbstsractCreatedAt.Meta):
         verbose_name = 'категория'
         verbose_name_plural = 'Категории'
-
-    def __str__(self):
-        return (
-            (self.title[:Constants.MAX_TITLE_LENGTH] + '...')
-            if len(self.title) > Constants.MAX_TITLE_LENGTH else self.title
-        )
 
 
 class Location(AbstractPublishedCreated):
@@ -47,7 +56,7 @@ class Location(AbstractPublishedCreated):
         'Название места', max_length=Constants.MAX_CHAR_FIELD_LENGTH
     )
 
-    class Meta:
+    class Meta(AbstsractCreatedAt.Meta):
         verbose_name = 'местоположение'
         verbose_name_plural = 'Местоположения'
 
@@ -86,9 +95,6 @@ class Post(AbstractPublishedCreated):
         'Изображение', upload_to='posts_images', blank=True
     )
 
-    def comment_count(self):
-        return self.post_comment.count()
-
     def get_absolute_url(self):
         return reverse('blog:post_detail', kwargs={'post_id': self.pk})
 
@@ -98,21 +104,21 @@ class Post(AbstractPublishedCreated):
         ordering = ('-pub_date',)
         default_related_name = 'posts'
 
-    def __str__(self):
-        return (
-            (self.title[:Constants.MAX_TITLE_LENGTH] + '...')
-            if len(self.title) > Constants.MAX_TITLE_LENGTH else self.title
-        )
 
-
-class Comment(models.Model):
+class Comment(AbstsractCreatedAt):
     text = models.TextField('Текст комментария')
-    post_comment = models.ForeignKey(
+    post = models.ForeignKey(
         Post,
-        on_delete=models.CASCADE, related_name='post_comment'
+        on_delete=models.CASCADE, related_name='post'
     )
-    created_at = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
 
-    class Meta:
-        ordering = ('created_at',)
+    class Meta(AbstsractCreatedAt.Meta):
+        verbose_name = 'комментарий'
+        verbose_name_plural = 'Комментарии'
+
+    def __str__(self):
+        return (
+            (self.text[:Constants.MAX_TITLE_LENGTH] + '...')
+            if len(self.text) > Constants.MAX_TITLE_LENGTH else self.text
+        )

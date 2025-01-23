@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group, User
+from django.utils.safestring import mark_safe
 
-from .models import Category, Location, Post
+from .models import Category, Comment, Location, Post
 
 admin.site.unregister(Group)
 admin.site.unregister(User)
@@ -20,7 +21,7 @@ class UserAdmin(BaseUserAdmin):
 class PostAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'title', 'author', 'location', 'category',
-        'is_published', 'pub_date', 'created_at'
+        'is_published', 'pub_date', 'created_at', 'image_preview'
     )
     list_display_links = ('title',)
     search_fields = (
@@ -28,6 +29,15 @@ class PostAdmin(admin.ModelAdmin):
         'category__title', 'location__name'
     )
     list_filter = ('is_published', 'created_at', 'category', 'location')
+
+    def image_preview(self, obj):
+        if obj.image:
+            return mark_safe(
+                f'<img src="{obj.image.url}" width="80" height="60">'
+            )
+        return ''
+    image_preview.short_description = Post._meta.get_field(
+        'image').verbose_name
 
 
 @admin.register(Location)
@@ -44,3 +54,11 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display_links = ('title',)
     search_fields = ('title', 'slug')
     list_filter = ('is_published',)
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'author', 'text', 'created_at')
+    list_display_links = ('text',)
+    search_fields = ('author', 'text')
+    list_filter = ('created_at',)
