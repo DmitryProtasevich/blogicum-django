@@ -13,8 +13,6 @@ class AbstsractCreatedAt(models.Model):
     class Meta:
         abstract = True
         ordering = ('created_at',)
-        verbose_name = 'имя в единственном числе'
-        verbose_name_plural = 'Категори'
 
 
 class AbstractPublishedCreated(AbstsractCreatedAt):
@@ -109,13 +107,18 @@ class Comment(AbstsractCreatedAt):
     text = models.TextField('Текст комментария')
     post = models.ForeignKey(
         Post,
-        on_delete=models.CASCADE, related_name='post'
+        on_delete=models.CASCADE,
+        verbose_name='Публикация',
     )
-    author = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        verbose_name='Автор комментария',
+    )
 
     class Meta(AbstsractCreatedAt.Meta):
         verbose_name = 'комментарий'
         verbose_name_plural = 'Комментарии'
+        default_related_name = 'comments'
 
     def __str__(self):
         return (

@@ -30,14 +30,13 @@ class PostAdmin(admin.ModelAdmin):
     )
     list_filter = ('is_published', 'created_at', 'category', 'location')
 
+    @admin.display(description='Изображение')
     def image_preview(self, obj):
         if obj.image:
             return mark_safe(
                 f'<img src="{obj.image.url}" width="80" height="60">'
             )
         return ''
-    image_preview.short_description = Post._meta.get_field(
-        'image').verbose_name
 
 
 @admin.register(Location)
