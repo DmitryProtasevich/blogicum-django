@@ -30,9 +30,7 @@ class PostMixin(LoginRequiredMixin, AuthorPermissionMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = self.form_class(
-            instance=self.model.objects
-            .get(pk=self.kwargs.get(self.pk_url_kwarg)))
+        context['form'] = self.form_class(instance=self.get_object())
         return context
 
 
