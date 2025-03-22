@@ -92,7 +92,7 @@ http://127.0.0.1:8000/admin/
 ```bash
 pytest
 ```
-# АВТОР
-Дмитрий Протасевич
-GitHub: https://github.com/DmitryProtasevich
+# АВТОР  
+Дмитрий Протасевич  
+GitHub: https://github.com/DmitryProtasevich  
 Telegram: https://t.me/DmitryProtasevich/
