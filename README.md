@@ -27,8 +27,8 @@
 
 Клонировать репозиторий и перейти в него в командной строке:
 ```bash
-git clone https://github.com/DmitryProtasevich/Блогикум.git
-cd Блогикум
+git clone https://github.com/DmitryProtasevich/blogicum-django.git
+cd blogicum-django
 ```
 Создать и активировать виртуальное окружение:
 ```bash
